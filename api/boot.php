@@ -43,7 +43,7 @@ try {
 
         ORM::configure("mysql:host=$dbHost;dbname=$dbName");
 
-        $sqlFile = '../Database/chollo_cuenca.sql'; 
+        $sqlFile = './Database/chollo_cuenca.sql'; 
         if (!file_exists($sqlFile)) {
             die("El archivo SQL '$sqlFile' no existe.");
         }
