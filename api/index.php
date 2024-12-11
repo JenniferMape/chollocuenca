@@ -9,6 +9,7 @@
 ini_set('display_errors',1);
 ini_set("log_errors",1);
 ini_set("error_log", "/home/u101606847/domains/chollocuenca.site/public_html/logs/php_error.log");
+date_default_timezone_set('Europe/Madrid'); 
 
 
 // Manejo de solicitudes OPTIONS para CORS
