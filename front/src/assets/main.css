@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  @apply font-parkinsans;
+}
+[data-theme="light"] .text-neutral-700 {
+  color: rgb(64 64 64) !important;
+}
+
+[data-theme="dark"] .text-neutral-700 {
+  color: rgb(209 213 219) !important; 
+}
+
+[data-theme="light"] .bg-white {
+ 
+  background-color: rgb(255 255 255 ) !important;
+}
+input[type="date"] {
+  appearance: auto !important; 
+}

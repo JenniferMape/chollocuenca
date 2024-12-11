@@ -1,0 +1,16 @@
+{
+    "name": "sedif/api",
+    "description": "api proyecto",
+    "autoload": {
+        "psr-4": {
+            "Sedif\\Api\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jennifer madrigal"
+        }
+    ],
+    "require": {"firebase/php-jwt": "^6.0",
+        "phpmailer/phpmailer": "^6.9"}
+}
