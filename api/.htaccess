@@ -7,8 +7,8 @@ RewriteEngine On
 
 # Habilitar CORS (para permitir solicitudes desde otros dominios si es necesario)
 <IfModule mod_headers.c>
-    # Header set Access-Control-Allow-Origin "https://chollocuenca.site"
-    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Origin "https://chollocuenca.site"
+    # Header set Access-Control-Allow-Origin "*"
     Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
     Header set Access-Control-Allow-Headers "Content-Type, Authorization"
 </IfModule>
