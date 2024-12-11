@@ -14,10 +14,8 @@ if ($routesArray[0] == 'category') {
         switch ($methodR['method']) {
             // Manejar peticiones de tipo GET 
             case 'GET':
-                //Petición get que está acompañada por un id
                 if (!empty($routesArray[1])&&is_numeric($routesArray[1])) {
 
-                    // Obtener el id de la categoría de la URL
                     $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['default' => 0, 'min_range' => 1]]);
                     if ($id <= 0) {
                         sendJsonResponse(400, null, 'ID no válido');
@@ -29,11 +27,9 @@ if ($routesArray[0] == 'category') {
                             sendJsonResponse(404, null, 'Categoría no encontrada');
                         }
                     }
-                //Petición get que devuelve todas las categorias, no va acompañada por un id
                 } else {
                     $allCategories = $controller->getAllCategories();
 
-                    // Validación y respuesta
                     if (!empty($allCategories)) {
                         sendJsonResponse(200, $allCategories);
                     } else {
@@ -45,7 +41,6 @@ if ($routesArray[0] == 'category') {
             // Manejar peticiones de tipo POST para crear una nueva categoría
             case 'POST':
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                    // Comprobación de que los campos obligatorios estén completados
                     if (empty($_POST['name_category']) || empty($_POST['description_category'])) {
                         sendJsonResponse(400, null,'Todos los campos obligatorios deben ser completados.');
                         return;

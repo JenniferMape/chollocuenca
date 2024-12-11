@@ -29,30 +29,25 @@ if (!empty($routesArray[1])) {
 
                 $input = file_get_contents('php://input');
 
-                // Decodificar el JSON
                 $data = json_decode($input, true);
 
-                // Verificar si la decodificación fue exitosa
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     sendJsonResponse(400, null, 'Formato de JSON inválido.');
                     return;
                 }
-                // Validación inicial de campos requeridos
+
                 if (empty($data['email_user']) || empty($data['password_user'])) {
                     sendJsonResponse(400, null, 'Todos los campos son obligatorios.');
                     return;
                 }
 
-                // Validación de email
                 if (!filter_var($data['email_user'], FILTER_VALIDATE_EMAIL)) {
                     sendJsonResponse(400, null, 'El formato del email no es válido.');
                     return;
                 }
 
-                // Conexión con la base de datos y búsqueda del usuario
                 $usuario = ORM::for_table('users')->where('email_user', $data['email_user'])->find_one();
 
-                // Verificar si el usuario existe y la contraseña es correcta
                 if ($usuario && password_verify($data['password_user'], $usuario->password_user)) {
                     $key = $JWT_SECRET;
                     $issuedAt = time();
@@ -66,7 +61,6 @@ if (!empty($routesArray[1])) {
                         ],
                     ];
 
-                    // Generar el token
                     $jwt = JWT::encode($payload, $key, 'HS256');
                    
                     sendJsonResponse(200, [
@@ -80,7 +74,6 @@ if (!empty($routesArray[1])) {
                         'token' => $jwt
                     ], 'Inicio de sesión exitoso.');
                 } else {
-                    // Datos incorrectos
                     sendJsonResponse(403, null, 'Correo electrónico o contraseña incorrectos.');
                 }
             } else {
@@ -94,50 +87,40 @@ if (!empty($routesArray[1])) {
             //GENERO UNA NUEVA CONTRASEÑA, SE MANDA AL EMAIL (COMPROBAR QUE EXISTA ANTES) Y SE GUARDA LA NUEVA CONTRASEÑA EN LA BD
                if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                // Obtener los datos del cuerpo de la solicitud POST
                 $input = file_get_contents('php://input');
                 $data = json_decode($input, true);
-        
-                // Verificar si la decodificación fue exitosa
+
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     sendJsonResponse(400, null, 'Formato de JSON inválido.');
                     return;
                 }
         
-                // Verificar si el email está presente en los datos
                 if (empty($data['email_user'])) {
                     sendJsonResponse(400, null, 'El campo de email es obligatorio.');
                     return;
                 }
         
-                // Validar el formato del email
                 if (!filter_var($data['email_user'], FILTER_VALIDATE_EMAIL)) {
                     sendJsonResponse(400, null, 'El formato del email no es válido.');
                     return;
                 }
-        
-                // Buscar el usuario en la base de datos por el email
+
                 $user = ORM::for_table('users')->where('email_user', $data['email_user'])->find_one();
         
                 if (!$user) {
                     sendJsonResponse(404, null, 'No se encontró un usuario con ese email.');
                     return;
                 }
-        
-                // Generar una nueva contraseña aleatoria
+ 
                 $newPassword = $register->generateRandomPassword();
-        
-                // Hashear la nueva contraseña
+
                 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         
-                // Actualizar la contraseña en la base de datos
                 $user->password_user = $hashedPassword;
         
                 if ($user->save()) {
-                    // Enviar la nueva contraseña al email
                     $mail = new PHPMailer(true);
                     try {
-                        // Configuración del servidor SMTP
                         $mail->isSMTP();
                         $mail->Host = getenv('MAIL_HOST');
                         $mail->SMTPAuth = true;
@@ -148,7 +131,7 @@ if (!empty($routesArray[1])) {
         
                         // Remitente y destinatario
                         $mail->setFrom(getenv('MAIL_USERNAME'), 'Chollo Cuenca');
-                        $mail->addAddress($data['email_user']); // Enviar al correo del usuario
+                        $mail->addAddress($data['email_user']); 
         
                         // Contenido del correo
                         $mail->isHTML(true);
@@ -177,16 +160,13 @@ if (!empty($routesArray[1])) {
 
                 $input = file_get_contents('php://input');
 
-                // Decodificar el JSON
                 $data = json_decode($input, true);
 
-                // Verificar si la decodificación fue exitosa
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     sendJsonResponse(400, null, 'Formato de JSON inválido.');
                     return;
                 }
 
-                // Comprobación de que los campos obligatorios estén completados
                 if (
                     empty($data['name_user']) || empty($data['email_user']) ||
                     empty($data['password_user']) || empty($data['type_user'])
@@ -195,19 +175,16 @@ if (!empty($routesArray[1])) {
                     return;
                 }
 
-                // Validación de email
                 if (!filter_var($data['email_user'], FILTER_VALIDATE_EMAIL)) {
                     sendJsonResponse(400, null, 'El formato del email no es válido.');
                     return;
                 }
 
-                // Validación de la contraseña (longitud mínima)
                 if (strlen($data['password_user']) < 8) {
                     sendJsonResponse(400, null, 'La contraseña debe tener al menos 8 caracteres.');
                     return;
                 }
 
-                // Verificar si el usuario ya existe
                 $existingUser = ORM::for_table('users')->where('email_user', $data['email_user'])->find_one();
                 if ($existingUser) {
                     sendJsonResponse(409, null, 'El correo electrónico ya está registrado.');
@@ -244,7 +221,6 @@ if (!empty($routesArray[1])) {
                         ],
                     ];
 
-                    // Generar el token
                     $jwt = JWT::encode($payload, $key, 'HS256');
 
                     sendJsonResponse(200, [

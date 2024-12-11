@@ -14,11 +14,9 @@ class Account
         $usuario = ORM::for_table('users')->find_one($data['id']);
 
         if ($usuario) {
-            // Actualizar los datos del usuario en la base de datos
             $usuario->name_user = $data['name_user'] ?? $usuario->name_user;
             $usuario->email_user = $data['email_user'] ?? $usuario->email_user;
 
-            // Verificar si la contraseña se ha proporcionado y actualizarla
             if (!empty($data['password_user'])) {
                 $usuario->password_user = password_hash($data['password_user'], PASSWORD_DEFAULT);
             }
@@ -27,10 +25,8 @@ class Account
                 $usuario->cif_user = $data['cif_user'];
             }
 
-            // Actualizar el avatar si está presente
             $usuario->avatar_user = $data['avatar_user'] ?? $usuario->avatar_user;
 
-            // Guardar los cambios en la base de datos
             $usuario->save();
 
             return true;

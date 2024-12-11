@@ -146,7 +146,6 @@ const authStore = useAuthStore();
 const toast = useToast();
 
 console.log(authStore.user);
-// Modal state
 const showModal = ref(false);
 const modalField = ref('');
 const modalValue = ref('');
@@ -160,11 +159,10 @@ const fieldLabels = {
   email: 'correo electrónico',
   password: 'contraseña',
 };
-// Avatar state
+
 const avatar = ref(null);
 const id = authStore.user?.id;
 
-// Functions
 const openModal = (field) => {
   modalField.value = field;
   modalValue.value = field === 'password' ? '' : authStore.user[field + '_user'];
@@ -179,7 +177,6 @@ const closeModal = () => {
 };
 
 const saveChanges = async () => {
-  // Validación del campo según el tipo
   if (modalField.value === 'username') {
     if (!modalValue.value.trim()) {
       modalError.value = true;
@@ -217,7 +214,6 @@ const saveChanges = async () => {
       }
     }
   }
-  // Si pasa la validación, continuar con la actualización
 
   if (modalField.value === 'username') await changeUsername(modalValue.value, id);
   if (modalField.value === 'email') await changeEmail(modalValue.value, id);

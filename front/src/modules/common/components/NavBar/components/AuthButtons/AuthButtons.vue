@@ -1,4 +1,3 @@
-<!-- AuthButtons.vue -->
 <template>
   <div class="flex items-center">
     <template v-if="!authStore.isAuthenticated">

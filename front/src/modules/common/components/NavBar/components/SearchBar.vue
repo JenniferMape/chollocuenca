@@ -1,4 +1,3 @@
-<!-- SearchBar.vue -->
 <template>
   <div class="relative flex-grow max-w-md mx-auto">
     <label class="input input-bordered flex items-center gap-2 w-full">
@@ -28,16 +27,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-// Estado reactivo para el input
 const query = ref('');
 
-// Definir los eventos que se van a emitir
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string): void;
 }>();
 
-// Emitir el valor al presionar Enter
 const emitSearch = () => {
-  emit('update:modelValue', query.value); // Emite el valor de búsqueda
+  emit('update:modelValue', query.value); 
 };
 </script>

@@ -18,7 +18,6 @@ if ($routesArray[0] == 'offer') {
                 sendJsonResponse(200, $allOffers, 'Listado de todas las ofertas');
                 return;
             } else {
-                // Obtener y parsear los parámetros de la URL
                 $filterString = $_GET['filter'];
                 $filters = $filterString ? parseFilter($filterString) : [];
 
@@ -79,10 +78,8 @@ if ($routesArray[0] == 'offer') {
             break;
 
         case 'POST':
-            // Comprobación de si es creación o edición
             $isCreating = empty($_POST['id']);
 
-            // Verificar campos obligatorios solo si es creación
             if ($isCreating && (
                 empty($_POST['id_company_offer']) ||
                 empty($_POST['id_category_offer']) ||
@@ -96,14 +93,10 @@ if ($routesArray[0] == 'offer') {
                 sendJsonResponse(400, NULL, 'Todos los campos obligatorios deben ser completados.');
                 return;
             }
-
-            // Comprobar si hay un archivo de imagen subido (opcional)
             $image_offer = NULL;
             if (isset($_FILES['image_offer']) && $_FILES['image_offer']['error'] === UPLOAD_ERR_OK) {
                 $image_offer = $_FILES['image_offer'];
             }
-
-            // Obtener los datos de la oferta, excluyendo valores null
             $data = array_filter([
                 'id' => $_POST['id'] ?? NULL,
                 'id_company_offer' => $_POST['id_company_offer'] ?? NULL,
@@ -123,7 +116,6 @@ if ($routesArray[0] == 'offer') {
 
             try {
                 if (!$isCreating) {
-                    // Actualizar oferta si tiene ID
                     $offer = $controller->updateOffer($data, $image_offer);
 
                     if ($offer) {
@@ -132,7 +124,6 @@ if ($routesArray[0] == 'offer') {
                         sendJsonResponse(404, NULL, 'Oferta no encontrada.');
                     }
                 } else {
-                    // Crear nueva oferta si no tiene ID
                     $offer = $controller->addOffer($data, $image_offer);
                     sendJsonResponse(201, $offer,'Oferta creada exitosamente.');
                 }

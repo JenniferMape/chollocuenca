@@ -14,16 +14,16 @@ if ($routesArray[0] == 'favorite') {
             // Manejar peticiones de tipo GET 
         case 'GET':
             if (!empty($routesArray[1]) && is_numeric($routesArray[1])) {
-                // Obtener el id de la URL
+       
                 $id = (int) $routesArray[1];
-                // Verificar si se solicitó con detalles completos
+         
                 $details = isset($_GET['details']) && $_GET['details'] === 'true';
         
                 if ($details) {
-                    // Obtener detalles completos de las ofertas favoritas
+              
                     $favorites = $controller->getFavoritesWithDetailsByUser($id);
                 } else {
-                    // Obtener solo los IDs de las ofertas favoritas
+               
                     $favorites = $controller->getFavoritesByUser($id);
                 }
         
@@ -48,7 +48,6 @@ if ($routesArray[0] == 'favorite') {
                     $json_data = file_get_contents('php://input');
                     $data = json_decode($json_data, true);
             
-                    // Validar JSON y datos
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         sendJsonResponse(400, null, 'Formato JSON inválido.');
                         return;
@@ -72,7 +71,6 @@ if ($routesArray[0] == 'favorite') {
                         'id_offer_favorite' => $id_offer_favorite,
                     ];
             
-                    // Usar el método toggleFavorite
                     $result = $controller->toggleFavorite($favoriteData);
                     if ($result) {
                         if ($result['action'] === 'added') {

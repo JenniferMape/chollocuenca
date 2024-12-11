@@ -1,5 +1,4 @@
 <template>
-  <!-- User's Offers -->
   <section class="bg-base-100 shadow-md p-6 rounded-lg ml-6 min-h-screen w-full">
     <div class="flex justify-between items-center mb-6">
       <h2 class="font-bold text-xl">Mis Ofertas</h2>
@@ -21,21 +20,17 @@
 
         <!-- Contenido de la Oferta -->
         <div class="flex-grow">
-          <!-- Título -->
           <h3 class="font-bold text-lg mb-2 line-clamp-2 h-[3rem]">
             {{ offer.title_offer }}
           </h3>
 
-          <!-- Categoría -->
           <p class="text-sm text-gray-600 mb-2">Categoría: {{ offer.category_offer_name }}</p>
 
-          <!-- Fecha -->
           <p class="text-sm text-gray-600 mb-4">
             Fecha: {{ offer.start_date_offer }} - {{ offer.end_date_offer }}
           </p>
         </div>
 
-        <!-- Enlace de edición -->
         <router-link
           :to="{ name: 'formOffer', params: { offerId: offer.id } }"
           class="btn btn-info"
@@ -47,7 +42,6 @@
 
     <div v-else class="text-center text-gray-500 mt-10">No has subido ninguna oferta todavía.</div>
 
-    <!-- Pagination Controls -->
     <div v-if="offers.length > offersPerPage" class="flex justify-between mt-6">
       <button
         @click="changePage(currentPage - 1)"
@@ -77,13 +71,12 @@ import { useAuthStore } from '@/modules/auth/composables/useAuthAction';
 const authStore = useAuthStore();
 const companyId = authStore.user?.id;
 
-// Variables para manejar las ofertas, categorías y la paginación
 const offers = ref([]);
 let categoryMap = {};
 const currentPage = ref(1);
 const offersPerPage = 6;
 
-// Función para formatear fecha a día/mes/año
+
 function formatDate(dateStr) {
   const date = new Date(dateStr);
   return date.toLocaleDateString('es-ES', {
@@ -93,10 +86,9 @@ function formatDate(dateStr) {
   });
 }
 
-// Función para obtener las categorías desde la base de datos
 const loadCategories = async () => {
   try {
-    const response = await tesloApi.get('/category'); // Ajusta la ruta según tu API
+    const response = await tesloApi.get('/category'); 
     if (response.data.status === 200) {
       categoryMap = response.data.result.reduce((map, category) => {
         map[category.id] = category.name_category;
@@ -110,9 +102,7 @@ const loadCategories = async () => {
   }
 };
 
-// Función para obtener las ofertas de la compañía y procesarlas
 const getOffersByCompany = async () => {
-  // Asegura que las categorías estan cargadas antes de procesar ofertas
   if (!Object.keys(categoryMap).length) {
     await loadCategories();
   }
@@ -134,29 +124,28 @@ const getOffersByCompany = async () => {
   }
 };
 
-// Computed para las ofertas paginadas
+
 const paginatedOffers = computed(() => {
   const start = (currentPage.value - 1) * offersPerPage;
   return offers.value.slice(start, start + offersPerPage);
 });
 
-// Computed para el total de páginas
+
 const totalPages = computed(() => Math.ceil(offers.value.length / offersPerPage));
 
-// Cambiar de página
+
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
   }
 };
 
-// Llamar a la función para obtener las ofertas y categorías al montar el componente
 onMounted(async () => {
   await loadCategories();
   await getOffersByCompany();
 });
 
-// Observar cambios en la ruta para actualizar las ofertas al volver a esta página
+
 const route = useRoute();
 watch(
   () => route.path,

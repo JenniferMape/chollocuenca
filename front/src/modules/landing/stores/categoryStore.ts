@@ -1,4 +1,3 @@
-// src/stores/categoryStore.ts
 import { defineStore } from 'pinia';
 
 export const useCategoryStore = defineStore('category', {

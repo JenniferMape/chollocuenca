@@ -49,7 +49,6 @@
         <p>No hay ofertas disponibles para esta categoría.</p>
       </div>
 
-      <!-- Mostrar lista de ofertas cuando hay productos -->
       <ProductCard v-else v-for="product in filteredOffers" :key="product.id" :product="product" />
     </div>
   </main>
@@ -71,7 +70,7 @@ const categoryStore = useCategoryStore();
 const noOffers = ref(false);
 const searchQuery = ref('');
 
-// Función para cargar ofertas
+
 const loadOffers = async () => {
   const category = categoryStore.selectedCategoryId;
   const endpoint = category > 0 ? `/offer?filter=type:offer_category:${category}` : `/offer`;
@@ -101,7 +100,7 @@ const loadOffers = async () => {
   }
 };
 
-// Filtrar ofertas por búsqueda y categoría
+
 const filteredOffers = computed(() => {
   return products.value.filter((product) => {
     const searchMatch =
@@ -111,9 +110,7 @@ const filteredOffers = computed(() => {
   });
 });
 
-// Observa cambios en selectedCategoryId para recargar las ofertas
 watch(() => categoryStore.selectedCategoryId, loadOffers);
 
-// Carga inicial de ofertas
 loadOffers();
 </script>

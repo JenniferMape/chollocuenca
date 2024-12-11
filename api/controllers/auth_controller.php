@@ -24,7 +24,6 @@ if (!empty($routesArray[1])) {
         case 'checkToken':
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
-        // Obtener el header Authorization
         $headers = getallheaders();
         $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : null;
 
@@ -33,12 +32,10 @@ if (!empty($routesArray[1])) {
             return;
         }
 
-        // Extraer el token del encabezado
         $token = str_replace('Bearer ', '', $authHeader);
         $key = $JWT_SECRET;
 
         try {
-            // Decodificar el token utilizando la clase Key
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
 
             // Verificar si el token ha expirado
@@ -46,14 +43,11 @@ if (!empty($routesArray[1])) {
                 throw new Exception('Token expirado.');
             }
 
-            // Extraer la información del usuario desde el token
             $userId = $decoded->data->userId;
 
-            // Verificar si el usuario existe en la base de datos
             $usuario = ORM::for_table('users')->find_one($userId);
 
             if ($usuario) {
-                // No generar un nuevo token si el token original aún es válido
                 sendJsonResponse(200, [
                     'user' => [
                         'id' => $usuario->id,
@@ -67,7 +61,6 @@ if (!empty($routesArray[1])) {
                 sendJsonResponse(403, null, 'Usuario no encontrado.');
             }
         } catch (Exception $e) {
-            // Si el token es inválido o expiró
             sendJsonResponse(401, null, 'Token inválido o expirado.');
         }
     } else {

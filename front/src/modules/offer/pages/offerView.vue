@@ -241,7 +241,7 @@ const calculateDiscountPercentage = (newPrice: number, originalPrice: number): n
 };
 // Función para volver atrás
 const goBack = () => {
-  router.back(); // Va a la página anterior del historial
+  router.back(); 
 };
 
 // ------------------------
@@ -306,7 +306,7 @@ const copyToClipboard = async (text: string) => {
 const checkIfFavorite = async () => {
   try {
     const response = await tesloApi.get(`/favorite/${userId}`);
-    const favorites = response.data.result; // Asumiendo que el backend devuelve un array de favoritos
+    const favorites = response.data.result; 
 
     const favorite = favorites.find(
       (fav: { id_offer_favorite: number }) => fav.id_offer_favorite === Number(props.offerId),
@@ -314,7 +314,7 @@ const checkIfFavorite = async () => {
 
     if (favorite) {
       isFavorite.value = true;
-      favoriteId.value = favorite.id; // Guardar el ID único del favorito
+      favoriteId.value = favorite.id; 
     } else {
       isFavorite.value = false;
       favoriteId.value = null;
@@ -337,11 +337,11 @@ const toggleFavorite = async () => {
     if (status === 201) {
       // Favorito agregado
       isFavorite.value = true;
-      favoriteId.value = result.id; // ID del favorito agregado
+      favoriteId.value = result.id; 
     } else if (status === 200) {
       // Favorito eliminado
       isFavorite.value = false;
-      favoriteId.value = null; // Ya no hay un favorito asociado
+      favoriteId.value = null; 
     } else {
       console.warn('Respuesta inesperada del servidor:', response.data);
     }

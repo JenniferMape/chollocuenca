@@ -11,13 +11,13 @@ $methodR = $method->getMethod();
 //  Verificar si la primera parte es 'account'
 if ($routesArray[0] == 'account') {
     $account = new Account();
-    // Verificar si la segunda parte es un número que se corresponde con un id de usuario
+   
     if (empty($routesArray[1]) || is_numeric($routesArray[1])) {
         // Manejar peticiones a /account
         switch ($methodR['method']) {
-                // Manejar peticiones de tipo GET para obtener a un usuario en específico
+            // Manejar peticiones de tipo GET para obtener a un usuario en específico
             case 'GET':
-                // Obtener el id del usuario de la URL
+                
                 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['default' => 0, 'min_range' => 1]]);
                 if ($id <= 0) {
                     sendJsonResponse(400, null, 'ID no válido');
@@ -33,7 +33,7 @@ if ($routesArray[0] == 'account') {
                 break;
 
 
-                // Manejar peticiones de tipo PUT para actualizar el usuario
+            // Manejar peticiones de tipo PUT para actualizar el usuario
             case 'PUT':
                 $json_data = file_get_contents('php://input');
                 $data = json_decode($json_data, true);
@@ -58,7 +58,7 @@ if ($routesArray[0] == 'account') {
             
                 break;
 
-                // Manejar peticiones que no se ajusten a los anteriores métodos
+            // Manejar peticiones que no se ajusten a los anteriores métodos
             default:
                 sendJsonResponse(405, null, 'Metodo no permitido');
                 break;
@@ -69,13 +69,13 @@ if ($routesArray[0] == 'account') {
 
         switch ($methodR['method']) {
             case 'GET':
-                // Obtener el id del usuario de la URL
+               
                 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['default' => 0, 'min_range' => 1]]);
 
                 if ($id <= 0) {
                     sendJsonResponse(400, null, 'ID no válido');
                 } else {
-                    // Llamar a la función getAvatar y obtener la respuesta
+                   
                     $avatar = $account->getAvatar($id);
                     $avatarUrl = stripslashes($avatar);
 
@@ -92,23 +92,19 @@ if ($routesArray[0] == 'account') {
                 // Obtener el ID del usuario de la URL
                 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-                // Verificar que el ID es válido y que hay un archivo subido sin errores
+               
                 if ($id && isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
                     $file = $_FILES['avatar'];
 
-                    // Intentar actualizar el avatar
                     $result = $account->updateAvatar($id, $file);
 
                     if ($result === true) {
-                        // Si la actualización fue exitosa, obtener el nuevo avatar
                         $avatar = $account->getAvatar($id);
                         sendJsonResponse(200, $avatar, 'Avatar actualizado con éxito.');
                     } else {
-                        // Si hay un error, devolverlo
                         sendJsonResponse(400, null, $result);
                     }
                 } else {
-                    // Devolver un error si el ID no es válido o no hay archivo
                     sendJsonResponse(400, null, 'Datos inválidos o archivo no proporcionado.');
                 }
                 break;

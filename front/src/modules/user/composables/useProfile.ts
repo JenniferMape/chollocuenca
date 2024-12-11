@@ -1,4 +1,3 @@
-// useProfileFunctions.ts
 import { useToast } from 'vue-toastification';
 import { tesloApi } from '@/api/tesloApi';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';

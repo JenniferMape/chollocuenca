@@ -1,21 +1,25 @@
 <?php
 
-class Category {
+class Category
+{
 
-    public function getAllCategories() {
+    public function getAllCategories()
+    {
         $categories = ORM::for_table('categories')->find_many();
         return $this->convertCollection($categories);
     }
- 
-    public function getCategory($id) {
+
+    public function getCategory($id)
+    {
         $category = ORM::for_table('categories')->find_one($id);
         return $category ? $this->convertObj($category) : null;
     }
 
-    public function addCategory($data) {
-        // Verificación básica de los datos antes de crear la categoría
+    public function addCategory($data)
+    {
+
         if (empty($data['name_category']) || empty($data['description_category'])) {
-            return false; // Retorna false si los datos no son válidos
+            return false;
         }
 
         $category = ORM::for_table('categories')->create();
@@ -23,18 +27,19 @@ class Category {
         $category->description_category = $data['description_category'];
         $category->save();
 
-        return $this->convertObj($category); // Retorna el objeto convertido
+        return $this->convertObj($category);
     }
 
-    public function updateCategory($data) {
+    public function updateCategory($data)
+    {
         $category = ORM::for_table('categories')->find_one($data['id']);
-    
+
         if ($category) {
-            // Actualizar los datos de la categoría en la base de datos
+
             $category->name_category = $data['name_category'] ?? $category->name_category;
             $category->description_category =  $data['description_category'] ?? $category->description_category;
-        
-            // Guardar los cambios en la base de datos
+
+
             $category->save();
 
             return true;
@@ -43,7 +48,8 @@ class Category {
         }
     }
 
-    public function deleteCategory($id) {
+    public function deleteCategory($id)
+    {
         $category = ORM::for_table('categories')->find_one($id);
         if ($category) {
             $category->delete();
@@ -53,7 +59,8 @@ class Category {
         }
     }
 
-    private function convertObj($obj) {
+    private function convertObj($obj)
+    {
         return [
             'id' => $obj->id ?? null,
             'name_category' => $obj->name_category ?? null,
@@ -71,4 +78,3 @@ class Category {
         return $result;
     }
 }
-?>

@@ -1,5 +1,4 @@
 <template>
-  <!-- User's Offers -->
   <section class="w-full bg-base-100 shadow-md p-6 rounded-lg ml-6 min-h-screen">
     <div v-if="paginatedOffers.length" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <div
@@ -38,7 +37,6 @@
 
     <div v-else class="text-center text-gray-500 mt-10">No has subido ninguna oferta todavía.</div>
 
-    <!-- Pagination Controls -->
     <div v-if="offers.length > offersPerPage" class="flex justify-between mt-6">
       <button
         @click="changePage(currentPage - 1)"
@@ -68,12 +66,10 @@ import { useAuthStore } from '@/modules/auth/composables/useAuthAction';
 const authStore = useAuthStore();
 const userId = authStore.user?.id;
 
-// Variables para manejar las ofertas, categorías y la paginación
 const offers = ref([]);
 const currentPage = ref(1);
 const offersPerPage = 6;
 
-// Función para formatear fecha a día/mes/año
 function formatDate(dateStr) {
   const date = new Date(dateStr);
   return date.toLocaleDateString('es-ES', {
@@ -83,7 +79,6 @@ function formatDate(dateStr) {
   });
 }
 
-// Función para obtener las ofertas de la compañía y procesarlas
 const getOffersByCompany = async () => {
   try {
     const response = await tesloApi.get(`/favorite/${userId}`, {
@@ -104,28 +99,24 @@ const getOffersByCompany = async () => {
   }
 };
 
-// Computed para las ofertas paginadas
 const paginatedOffers = computed(() => {
   const start = (currentPage.value - 1) * offersPerPage;
   return offers.value.slice(start, start + offersPerPage);
 });
 
-// Computed para el total de páginas
 const totalPages = computed(() => Math.ceil(offers.value.length / offersPerPage));
 
-// Cambiar de página
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
   }
 };
 
-// Llamar a la función para obtener las ofertas y categorías al montar el componente
+
 onMounted(async () => {
   await getOffersByCompany();
 });
 
-// Observar cambios en la ruta para actualizar las ofertas al volver a esta página
 const route = useRoute();
 watch(
   () => route.path,

@@ -7,12 +7,12 @@ class Offer
     public function getAllOffers()
     {
         $offers = ORM::for_table('offers')
-            ->join('categories', ['offers.id_category_offer', '=', 'categories.id']) // Join con categorías
-            ->join('users', ['offers.id_company_offer', '=', 'users.id'])           // Join con compañías (usuarios)
-            ->select('offers.*')                 // Selecciona todos los campos de la tabla ofertas
-            ->select('categories.name_category', 'category_name') // Nombre de la categoría
-            ->select('users.name_user', 'company_name')           // Nombre de la compañía
-            ->order_by_desc('offers.created_offer') // Ordena por fecha de creación
+            ->join('categories', ['offers.id_category_offer', '=', 'categories.id'])
+            ->join('users', ['offers.id_company_offer', '=', 'users.id'])           
+            ->select('offers.*')                
+            ->select('categories.name_category', 'category_name') 
+            ->select('users.name_user', 'company_name')          
+            ->order_by_desc('offers.created_offer')
             ->find_many();
         return $this->convertCollection($offers);
     }
@@ -20,12 +20,12 @@ class Offer
     public function getOfferById($id)
     {
         $offer = ORM::for_table('offers')
-            ->join('categories', ['offers.id_category_offer', '=', 'categories.id']) // Join con categorías
-            ->join('users', ['offers.id_company_offer', '=', 'users.id'])           // Join con compañías (usuarios)
-            ->select('offers.*')                  // Selecciona todos los campos de la tabla ofertas
-            ->select('categories.name_category', 'category_name') // Nombre de la categoría
-            ->select('users.name_user', 'company_name')           // Nombre de la compañía
-            ->find_one($id); // Encuentra la oferta por su ID
+            ->join('categories', ['offers.id_category_offer', '=', 'categories.id'])
+            ->join('users', ['offers.id_company_offer', '=', 'users.id'])
+            ->select('offers.*')
+            ->select('categories.name_category', 'category_name')
+            ->select('users.name_user', 'company_name')
+            ->find_one($id);
         return $offer ? $this->convertObj($offer) : null;
     }
 
@@ -34,7 +34,6 @@ class Offer
         $title = trim($title);
         $titleFormat = '%' . $title . '%';
 
-        // Log para depurar
         error_log("Buscando ofertas con el título: " . $titleFormat);
 
         $offers = ORM::for_table('offers')
@@ -52,13 +51,13 @@ class Offer
     public function getOffersByCategory($id_category_offer)
     {
         $offers = ORM::for_table('offers')
-            ->join('categories', ['offers.id_category_offer', '=', 'categories.id']) // Join con categorías
-            ->join('users', ['offers.id_company_offer', '=', 'users.id'])           // Join con compañías (usuarios)
-            ->select('offers.*')                  // Selecciona todos los campos de la tabla ofertas
-            ->select('categories.name_category', 'category_name') // Nombre de la categoría
-            ->select('users.name_user', 'company_name')           // Nombre de la compañía
-            ->where('offers.id_category_offer', $id_category_offer) // Filtra por la categoría
-            ->order_by_desc('offers.created_offer') // Ordena por fecha de creación
+            ->join('categories', ['offers.id_category_offer', '=', 'categories.id'])
+            ->join('users', ['offers.id_company_offer', '=', 'users.id'])
+            ->select('offers.*')
+            ->select('categories.name_category', 'category_name')
+            ->select('users.name_user', 'company_name')
+            ->where('offers.id_category_offer', $id_category_offer)
+            ->order_by_desc('offers.created_offer')
             ->find_many();
 
         return $this->convertCollection($offers);
@@ -72,12 +71,10 @@ class Offer
 
     public function findOffersByPriceRange($minPrice, $maxPrice, $orderBy = 'new_price_offer', $orderDirection = 'asc')
     {
-        // Valida que la dirección es válida 
         if (!in_array($orderDirection, ['asc', 'desc'])) {
             throw new InvalidArgumentException("Invalid order direction: $orderDirection");
         }
 
-        // Valida el nombre de la columna de ordenamiento 
         $validOrderColumns = [
             'id',
             'id_company_offer',
@@ -99,12 +96,10 @@ class Offer
             throw new InvalidArgumentException("Invalid order by column: $orderBy");
         }
 
-        // Construye la consulta SQL
         $query = ORM::for_table('offers')
             ->where_gte('new_price_offer', $minPrice)
             ->where_lte('new_price_offer', $maxPrice);
 
-        // Aplica la ordenación dependiendo de la dirección
         if ($orderDirection === 'asc') {
             $query->order_by_asc($orderBy);
         } else {
@@ -117,12 +112,10 @@ class Offer
 
     public function addOffer($data, $image = null)
     {
-        // Verificación básica de los datos antes de crear la oferta
         if (empty($data['id_company_offer']) || empty($data['title_offer']) || empty($data['new_price_offer']) || empty($data['original_price_offer'])) {
             throw new InvalidArgumentException("Los datos de la oferta no son válidos");
         }
 
-        // Crear la oferta en la base de datos
         $offer = ORM::for_table('offers')->create();
         $offer->id_company_offer = $data['id_company_offer'];
         $offer->id_category_offer = $data['id_category_offer'];
@@ -136,10 +129,8 @@ class Offer
         $offer->web_offer = $data['web_offer'];
         $offer->address_offer = $data['address_offer'];
 
-        // Guardar la oferta básica para obtener el ID
         $offer->save();
 
-        // Subir la imagen de la oferta usando el ID recién creado
         if ($image) {
             $uploadedFileName = $this->uploadOfferImage($offer->id, $image);
             $offer->image_offer = URL.'/uploads/offers/' . $data['id_company_offer'] . '/' . $offer->id . '/' . $uploadedFileName;
@@ -147,17 +138,16 @@ class Offer
         }
 
 
-        return $this->convertObj($offer); // Retorna el objeto convertido
+        return $this->convertObj($offer);
     }
 
 
     public function updateOffer($dataOffer, $image = null)
     {
-        // Buscar la oferta en la base de datos
         $offer = ORM::for_table('offers')->find_one($dataOffer['id']);
 
         if ($offer) {
-            // Actualizar los campos de la oferta con los datos recibidos
+
             $offer->id_category_offer = isset($dataOffer['id_category_offer']) ? $dataOffer['id_category_offer'] : $offer->id_category_offer;
             $offer->title_offer = isset($dataOffer['title_offer']) ? $dataOffer['title_offer'] : $offer->title_offer;
             $offer->description_offer = isset($dataOffer['description_offer']) ? $dataOffer['description_offer'] : $offer->description_offer;
@@ -169,25 +159,19 @@ class Offer
             $offer->web_offer = isset($dataOffer['web_offer']) ? $dataOffer['web_offer'] : $offer->web_offer;
             $offer->address_offer = isset($dataOffer['address_offer']) ? $dataOffer['address_offer'] : $offer->address_offer;
 
-            // Manejo de la imagen
-
             if ($image) {
-                // Si ya existe una imagen para la oferta, eliminarla
                 if (!empty($offer->image_offer)) {
                     $this->deleteOfferImage($offer->image_offer);
                 }
 
-                // Subir la nueva imagen y asignar la ruta a la oferta
                 $uploadedFileName = $this->uploadOfferImage($offer->id, $image);
                 $offer->image_offer = URL.'/uploads/offers/' . $dataOffer['id_company_offer'] . '/' . $offer->id . '/' . $uploadedFileName;
             }
-            //Guardar los cambios en la base de datos
+
             $offer->save();
 
-            //Retornar el objeto actualizado
             return $this->convertObj($offer);
         } else {
-            //Responder con error si la oferta no existe
             return false;
         }
     }
@@ -195,7 +179,6 @@ class Offer
 
     public function deleteOffer($id)
     {
-        // Buscar la oferta en la base de datos
         $offer = ORM::for_table('offers')->find_one($id);
 
         if ($offer) {
@@ -213,19 +196,15 @@ class Offer
 
     public function deleteOfferImage($imagePath)
     {
-        // Construir la ruta completa en el servidor
         $serverPath = $_SERVER['DOCUMENT_ROOT'] . parse_url($imagePath, PHP_URL_PATH);
 
         if (file_exists($serverPath)) {
-            // Eliminar el archivo
             unlink($serverPath);
 
-            // Obtener la carpeta donde se encontraba la imagen
             $directoryPath = dirname($serverPath);
 
-            // Verificar si la carpeta está vacía
             if (is_dir($directoryPath) && count(array_diff(scandir($directoryPath), ['.', '..'])) === 0) {
-                rmdir($directoryPath); // Eliminar la carpeta si está vacía
+                rmdir($directoryPath); 
             }
 
             return true;
@@ -235,16 +214,13 @@ class Offer
     }
     public function uploadOfferImage($offerId, $image = null)
     {
-        // Verificar si la oferta existe
         $offer = ORM::for_table('offers')->find_one($offerId);
 
         if ($offer) {
             $companyId = $offer->id_company_offer;
 
-            // Directorio base para almacenar imágenes de ofertas
             $baseUploadDir = realpath(__DIR__ . '/../uploads/offers/') . '/';
 
-            // Crear estructura de carpetas
             $companyUploadDir = $baseUploadDir . $companyId . '/';
             $offerUploadDir = $companyUploadDir . $offerId . '/';
 
@@ -267,7 +243,6 @@ class Offer
                     $uploadPath = $offerUploadDir . $newFileName;
 
                     if (move_uploaded_file($image['tmp_name'], $uploadPath)) {
-                        // Retorna solo el nombre del archivo
                         return $newFileName;
                     } else {
                         throw new RuntimeException('Error al mover el archivo subido.');

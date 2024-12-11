@@ -1,5 +1,4 @@
 <template>
-  <!-- Offer Form -->
   <section class="w-3/4 bg-base-100 shadow-md p-6 rounded-lg ml-6">
     <h2 class="font-bold text-xl mb-6">{{ isEditMode ? 'Editar Oferta' : 'Nueva Oferta' }}</h2>
     <form @submit.prevent="handleOfferAction" class="card-body p-6 grid grid-cols-1 gap-4">
@@ -157,12 +156,10 @@ import { tesloApi } from '@/api/tesloApi';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/modules/auth/composables/useAuthAction';
 
-// Setup variables
 const router = useRouter();
 const authStore = useAuthStore();
 const toast = useToast();
 
-// Local state
 const offerTitle = ref('');
 const offerCategory = ref('');
 const startDate = ref('');
@@ -178,7 +175,7 @@ const offerWebsite = ref('');
 const offerAddress = ref('');
 const id = authStore.user?.id;
 
-// Categories
+
 const categories = [
   { value: '1', label: 'Alimentación' },
   { value: '2', label: 'Automoción' },
@@ -201,43 +198,38 @@ const props = defineProps({
   },
 });
 
-// Create a local reactive variable for isEditMode
 const isEditMode = ref(props.isEditMode);
 
-// Watch for changes to isEditMode prop
 watch(
   () => props.isEditMode,
   (newIsEditMode) => {
-    isEditMode.value = newIsEditMode; // Sincroniza la variable local con la propiedad
+    isEditMode.value = newIsEditMode;
   },
 );
 
-// Watch for changes to `offerId`
+
 watch(
   () => props.offerId,
   (newOfferId, oldOfferId) => {
     if (newOfferId && newOfferId !== oldOfferId) {
-      // Llamada a loadOfferData() solo si el `offerId` cambia
       loadOfferData();
     } else if (!newOfferId) {
-      // Si no hay `offerId` (modo creación), resetear el formulario
       resetForm();
     }
   },
 );
 
-// Load offer data on mounted
 onMounted(() => {
   if (props.offerId) {
-    loadOfferData(); // Carga los datos si estamos en modo edición
+    loadOfferData();
   } else {
-    //resetForm(); // Reinicia los campos del formulario si no hay `offerId`
+    //resetForm(); 
   }
 });
 onUnmounted(() => {
   resetForm();
 });
-// Resetea los valores de los campos cuando se está creando una nueva oferta
+
 const resetForm = () => {
   offerTitle.value = '';
   offerCategory.value = '';
@@ -264,16 +256,15 @@ function handleImageChange(event) {
   const file = event.target.files[0];
   if (file) {
     offerImage.value = file;
-    offerImageUrl.value = URL.createObjectURL(file); // Crea una URL para la vista previa de la imagen
+    offerImageUrl.value = URL.createObjectURL(file);
   }
 }
 
 function removeImage() {
-  // Elimina la imagen seleccionada
   offerImage.value = null;
   offerImageUrl.value = null;
 }
-// Load offer data
+
 const loadOfferData = async () => {
   try {
     const response = await tesloApi.get(`/offer?filter=type:offer_id:${props.offerId}`);
@@ -295,18 +286,15 @@ const loadOfferData = async () => {
   }
 };
 
-// Format date
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
   return date.toISOString().slice(0, 19).replace('T', ' ');
 };
 
-// Handle offer action
 const handleOfferAction = () => {
   isEditMode.value ? updateOfferPayload() : createOfferPayload();
 };
 
-// Create offer payload
 const createOfferPayload = async () => {
   if (
     !offerTitle.value ||

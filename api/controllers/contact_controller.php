@@ -15,7 +15,6 @@ if ($routesArray[0] == 'contact') {
         case 'POST': // Manejar el envío del formulario
             header('Content-Type: application/json');
 
-            // Verifica si los datos se enviaron correctamente
             $data = json_decode(file_get_contents('php://input'), true);
             if (!$data || empty($data['email']) || empty($data['message'])) {
                 http_response_code(400);
@@ -23,15 +22,12 @@ if ($routesArray[0] == 'contact') {
                 exit;
             }
 
-            // Datos del formulario
             $userEmail = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
             $userMessage = htmlspecialchars($data['message']);
 
-            // Configura el envío del correo
             $mail = new PHPMailer(true);
 
             try {
-                // Configuración del servidor SMTP
                 $mail->isSMTP();
                 $mail->Host = getenv('MAIL_HOST');
                 $mail->SMTPAuth = true;
@@ -41,8 +37,8 @@ if ($routesArray[0] == 'contact') {
                 $mail->Port = getenv('MAIL_PORT');
 
                 // Remitente y destinatario
-                $mail->setFrom(getenv('MAIL_USERNAME'), 'Chollo Cuenca'); // Tu correo
-                $mail->addAddress(getenv('MAIL_USERNAME')); // Receptor (tu cuenta)
+                $mail->setFrom(getenv('MAIL_USERNAME'), 'Chollo Cuenca'); 
+                $mail->addAddress(getenv('MAIL_USERNAME')); 
 
                 // Contenido del correo
                 $mail->isHTML(true);

@@ -1,4 +1,3 @@
-<!-- ThemeToggle.vue -->
 <template>
   <label class="swap swap-rotate ml-3">
     <input

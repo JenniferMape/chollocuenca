@@ -60,7 +60,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { computed } from 'vue';
 import { useAuthStore } from '@/modules/auth/composables/useAuthAction';
 const authStore = useAuthStore();
-// Recibir los datos del producto
+
 const props = defineProps({
   product: {
     type: Object,
@@ -87,16 +87,14 @@ const discountPercentage = computed(() => {
       100,
   );
 });
-// Formatear la fecha
+
 const formattedTime = computed(() => {
   const endDate = new Date(props.product.end_date);
 
-  // Extraer el día, mes y año
   const day = String(endDate.getDate()).padStart(2, '0');
-  const month = String(endDate.getMonth() + 1).padStart(2, '0'); // Los meses son 0 indexados
+  const month = String(endDate.getMonth() + 1).padStart(2, '0'); 
   const year = endDate.getFullYear();
 
-  // Retornar en formato dd/mm/yyyy
   return `${day}/${month}/${year}`;
 });
 </script>

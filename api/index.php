@@ -14,7 +14,7 @@ date_default_timezone_set('Europe/Madrid');
 
 // Manejo de solicitudes OPTIONS para CORS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204); // Código de respuesta para "No Content"
+    http_response_code(204); 
     exit;
 }
 
