@@ -34,7 +34,7 @@ SetEnv DB_NAME u101606847_chollo_cuenca
 SetEnv DB_USER u101606847_jmp92
 SetEnv DB_PASSWORD CcjmpDaw92
 
-SetEnv JWT_SECRET=jny6i$ocue9w
+SetEnv JWT_SECRET jny6i$ocue9w
 
 SetEnv MAIL_HOST smtp.hostinger.com
 SetEnv MAIL_USERNAME contacto@chollocuenca.site
