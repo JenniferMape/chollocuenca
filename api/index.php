@@ -1,7 +1,4 @@
 <?php
-
-
-
 /******************************
  * Mostrar errores
 *******************************/
@@ -19,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 define("URL", "https://api.chollocuenca.site");
+
 /******************************
  * Requires
 *******************************/
