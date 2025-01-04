@@ -49,19 +49,15 @@ class Account
                 $usuario->delete();
                 return true;
             } elseif ($usuario->type_user === 'COMPANY') {
-                // Llamar al método existente para eliminar el avatar
                 $this->deleteAvatar($usuario->id);
 
-                // Llamar al método para eliminar la cuenta de la empresa
                 if(!$this->deleteOffersCompany($usuario->id)){
                     return false;
                 }
 
-                // Eliminar el registro de usuario después
                 $usuario->delete();
                 return true;
             }
-            // Tipo de usuario no reconocido
             return false;
         }
     }
@@ -72,10 +68,9 @@ class Account
 
         if ($usuario) {
             $avatar = $usuario->avatar_user;
-            // Si no hay avatar, devolver la URL de la imagen por defecto
             return empty($avatar) ? null : $avatar;
         } else {
-            return null; // Usuario no encontrado
+            return null;
         }
     }
 
@@ -87,7 +82,6 @@ class Account
             $uploadDir = realpath(__DIR__ . '/../uploads/avatars/') . '/';
 
             if (is_array($avatar) && isset($avatar['name']) && !empty($avatar['name'])) {
-                // Verificar la extensión y tipo de archivo
                 $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
                 $extension = strtolower(pathinfo($avatar['name'], PATHINFO_EXTENSION));
 
@@ -98,12 +92,10 @@ class Account
                     $newFileName = $id . '.' . $extension;
                     $uploadPath = $uploadDir . $newFileName;
 
-                    // Comprobar si ya hay un avatar existente y eliminarlo
                     if ($usuario->avatar_user && file_exists($uploadDir . basename($usuario->avatar_user))) {
                         unlink($uploadDir . basename($usuario->avatar_user));
                     }
 
-                    // Mover el archivo subido
                     if (move_uploaded_file($avatar['tmp_name'], $uploadPath)) {
                         $usuario->avatar_user = URL.'/uploads/avatars/' . $newFileName;
                     } else {
@@ -126,15 +118,11 @@ class Account
         $usuario = ORM::for_table('users')->find_one($id);
 
         if ($usuario) {
-            // Ruta absoluta de la carpeta de uploads
             $uploadDir = realpath(__DIR__ . '/../uploads/avatars/') . '/';
 
-            // Verificar si el usuario tiene un avatar y si el archivo existe
             if ($usuario->avatar_user && file_exists($uploadDir . basename($usuario->avatar_user))) {
-                // Eliminar el archivo del servidor
                 unlink($uploadDir . basename($usuario->avatar_user));
 
-                // Eliminar la referencia del avatar en la base de datos
                 $usuario->avatar_user = null;
                 $usuario->save();
 
@@ -150,7 +138,6 @@ class Account
     public function deleteOffersCompany($companyId)
     {
         try {
-            // Eliminar el directorio de la empresa si existe
             $companyDirectory = $_SERVER['DOCUMENT_ROOT'] . "/uploads/offers/" . $companyId;
     
             if (is_dir($companyDirectory)) {
@@ -159,7 +146,6 @@ class Account
                 error_log("Directorio no encontrado: " . $companyDirectory);
             }
     
-            // Eliminar las ofertas de la base de datos
             ORM::for_table('offers')
                 ->where('id_company_offer', $companyId)
                 ->delete_many();
@@ -172,17 +158,14 @@ class Account
     
     private function deleteFolderRecursively($folderPath)
     {
-        // Obtener todos los archivos y carpetas dentro de la carpeta
         $files = array_diff(scandir($folderPath), ['.', '..']);
     
         foreach ($files as $file) {
             $filePath = $folderPath . DIRECTORY_SEPARATOR . $file;
     
             if (is_dir($filePath)) {
-                // Llamada recursiva para subcarpetas
                 $this->deleteFolderRecursively($filePath);
             } else {
-                // Eliminar archivo
                 if (!unlink($filePath)) {
                     error_log("No se pudo eliminar el archivo: " . $filePath);
                 }
@@ -222,25 +205,20 @@ class Account
             for ($i = 1; $i < 8; $i++) {
                 $numero = (int) $cif[$i];
 
-                // Sumar los dígitos en posiciones pares
                 if ($i % 2 == 0) {
                     $sumaPar += $numero;
                 } else {
-                    // Duplicar los dígitos en posiciones impares y sumar los dígitos del resultado
                     $imp = 2 * $numero;
                     if ($imp > 9) $imp = 1 + ($imp - 10);
                     $sumaImpar += $imp;
                 }
             }
 
-            // Sumar todas las cifras obtenidas
             $sumaTotal = $sumaPar + $sumaImpar;
 
-            // Calcular el dígito de control
             $digitoControl = (10 - ($sumaTotal % 10)) % 10;
             $letraControl = $control[$digitoControl];
 
-            // El dígito de control debe coincidir con el último carácter del CIF
             return strtoupper($cif[8]) == $letraControl;
         }
         return false;
