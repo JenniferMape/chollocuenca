@@ -1,5 +1,5 @@
 <?php
-require 'vendor/autoload.php'; // Asegúrate de que PHPMailer esté instalado
+require 'vendor/autoload.php';
 include('./helpers/response.php');
 include('./helpers/HTTPMethod.php');
 

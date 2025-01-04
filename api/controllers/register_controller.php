@@ -13,7 +13,7 @@ include('./models/register.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use \Firebase\JWT\JWT;
-$JWT_SECRET = getenv('JWT_SECRET');
+$JWT_SECRET = 'jny6i$ocue9w';
 
 
 $method = new HTTPMethod();
@@ -45,23 +45,29 @@ if (!empty($routesArray[1])) {
                     sendJsonResponse(400, null, 'El formato del email no es válido.');
                     return;
                 }
-
+         
+                if (!$JWT_SECRET) {
+                    sendJsonResponse(500, null, 'Clave secreta de JWT no configurada.');
+                    return;
+                }
                 $usuario = ORM::for_table('users')->where('email_user', $data['email_user'])->find_one();
 
                 if ($usuario && password_verify($data['password_user'], $usuario->password_user)) {
-                    $key = $JWT_SECRET;
-                    $issuedAt = time();
-                    $expirationTime = $issuedAt + 3600;
+                   
                     $payload = [
-                        'iat' => $issuedAt,
-                        'exp' => $expirationTime,
+                        'iss' => 'https://chollocuenca.site/', 
+                        'aud' => 'https://chollocuenca.site/',
+                        'iat' => time(),
+                        'nbf' => time(),
+                        'exp' => time() + 3600,
                         'data' => [
-                            'userId' => $usuario->id,
-                            'email' => $usuario->email_user,
-                        ],
+                            'userId' => $usuario->id
+                        ]
                     ];
-
-                    $jwt = JWT::encode($payload, $key, 'HS256');
+                   
+                    // Generar el token
+                    $token = JWT::encode($payload, $JWT_SECRET, 'HS256');
+                    
                    
                     sendJsonResponse(200, [
                         'user' => [
@@ -71,7 +77,7 @@ if (!empty($routesArray[1])) {
                             'type_user' => $usuario->type_user,
                             'avatar_user' => $usuario->avatar_user,
                         ],
-                        'token' => $jwt
+                        'token' => $token
                     ], 'Inicio de sesión exitoso.');
                 } else {
                     sendJsonResponse(403, null, 'Correo electrónico o contraseña incorrectos.');
@@ -209,19 +215,19 @@ if (!empty($routesArray[1])) {
                 $usuario->avatar_user = isset($data['avatar_user']) ? $data['avatar_user'] : null;
 
                 if ($usuario->save()) {
-                    $key = $JWT_SECRET;
-                    $issuedAt = time();
-                    $expirationTime = $issuedAt + 3600;
                     $payload = [
-                        'iat' => $issuedAt,
-                        'exp' => $expirationTime,
+                        'iss' => 'https://chollocuenca.site/',
+                        'aud' => 'https://chollocuenca.site/',
+                        'iat' => time(),
+                        'nbf' => time(),
+                        'exp' => time() + 3600,
                         'data' => [
-                            'userId' => $usuario->id,
-                            'email' => $usuario->email_user,
-                        ],
+                            'userId' => $usuario->id
+                        ]
                     ];
-
-                    $jwt = JWT::encode($payload, $key, 'HS256');
+                    
+                    // Generar el token
+                    $token = JWT::encode($payload, $JWT_SECRET, 'HS256');
 
                     sendJsonResponse(200, [
                         'user' => [
@@ -231,7 +237,7 @@ if (!empty($routesArray[1])) {
                             'type_user' => $usuario->type_user,
                             'avatar_user' => $usuario->avatar_user
                         ],
-                        'token' => $jwt
+                        'token' => $token
                     ], 'Usuario guardado correctamente.');
                 } else {
                     sendJsonResponse(500, null, 'Error al guardar el usuario.');
@@ -256,3 +262,4 @@ if (!empty($routesArray[1])) {
         return $password;
     }
 }
+
